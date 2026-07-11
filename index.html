@@ -10,17 +10,19 @@
         .loading-box { text-align: center; max-width: 400px; margin: 150px auto; font-size: 24px; color: #38bdf8; font-weight: 700;}
         
         /* 50/50 Split Layout */
-        .foyer-container { display: grid; grid-template-columns: 1.2fr 1fr; gap: 25px; height: 95vh; box-sizing: border-box; }
+        .foyer-container { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; height: 95vh; box-sizing: border-box; }
         .foyer-column { display: flex; flex-direction: column; background: #1e293b; border-radius: 16px; padding: 25px; border: 1px solid #334155; height: 100%; box-sizing: border-box; overflow: hidden;}
         .foyer-title { font-size: 32px; font-weight: 900; padding-bottom: 15px; border-bottom: 4px solid #475569; color:#38bdf8; margin-bottom: 20px;}
         
         /* Spielfelder-Grid */
-        .foyer-court-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; overflow-y: auto; }
-        .foyer-court-card { background: #0f172a; border: 4px solid #475569; border-radius: 16px; padding: 15px 10px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; min-height: 180px; box-sizing: border-box; transition: border-color 0.3s;}
-        .foyer-court-num { font-size: 26px; font-weight: 900; margin-bottom: 2px;}
-        .foyer-court-disz { font-size: 18px; font-weight: 900; padding: 3px 10px; border-radius: 6px; display: inline-block; align-self: center; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.2);}
+        .foyer-court-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; overflow-y: auto; }
+        .foyer-court-card { background: #0f172a; border: 4px solid #475569; border-radius: 16px; padding: 12px 10px; text-align: center; display: flex; flex-direction: column; gap: 8px; min-height: 160px; box-sizing: border-box; transition: border-color 0.3s;}
+        .foyer-court-header { display: flex; justify-content: space-between; align-items: center; padding: 0 8px; }
+        .foyer-court-num { font-size: 20px; font-weight: 900; }
+        .foyer-court-disz { font-size: 18px; font-weight: 900; padding: 3px 10px; border-radius: 6px; display: inline-block; border: 1px solid rgba(255,255,255,0.2);}
         .foyer-court-team { font-size: 18px; font-weight: 800; color: #ffffff; line-height: 1.3;}
-        .foyer-live-timer { font-size: 14px; color: #f43f5e; margin-top: 12px; background: rgba(244,63,94,0.15); padding: 4px 10px; border-radius: 6px; align-self: center; font-weight: 900; border: 1px solid rgba(244,63,94,0.3);}
+        .foyer-live-timer { font-size: 14px; color: #f43f5e; background: rgba(244,63,94,0.15); padding: 4px 10px; border-radius: 6px; font-weight: 900; border: 1px solid rgba(244,63,94,0.3);}
+        .foyer-court-teams { display: flex; flex-direction: column; align-items: center; }
         
         /* Warteliste */
         .foyer-warten-list { display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
@@ -164,16 +166,16 @@ function renderFoyer(liveCourts, wartenList) {
             let catClass = getCategoryClass(c.disz);
             return `
             <div class="foyer-court-card ${catClass}">
-                <div>
-                    <div class="foyer-court-num">Feld ${c.id}</div>
-                    <div class="foyer-court-disz">${c.disz}</div>
+                <div class="foyer-court-header">
+                    <span class="foyer-court-disz">${c.disz}</span>
+                    <span class="foyer-court-num">Feld ${c.id}</span>
+                    <span class="foyer-live-timer" data-start="${c.startTime}">⏱️ 0:00</span>
                 </div>
-                <div>
+                <div class="foyer-court-teams">
                     <div class="foyer-court-team">${c.p1.replace(' / ', '<br>& ')}</div>
                     <div style="font-size:12px; color:#64748b; margin:6px 0; font-weight:bold;">vs</div>
                     <div class="foyer-court-team">${c.p2.replace(' / ', '<br>& ')}</div>
                 </div>
-                <div class="foyer-live-timer" data-start="${c.startTime}">⏱️ 0:00</div>
             </div>`;
         }).join('');
 

@@ -46,7 +46,10 @@
                 <h1>🏸 Badminton Live-Regie</h1>
                 <p style="margin: 0; color: #64748b; font-size: 14px;">Status: <span id="peer-status" style="color:orange; font-weight:bold;">Verbinde zum Netzwerk...</span></p>
             </div>
-            <button class="btn" style="background: #475569; margin-top:0; width:auto;" onclick="toggleModal(true)">👥 Spieler-Datenbank</button>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn" style="background: #475569; margin-top:0; width:auto;" onclick="toggleModal(true)">👥 Spieler-Datenbank</button>
+                <button class="btn btn-success" style="margin-top:0; width:auto;" onclick="broadcastDaten()">📤 Senden</button>
+            </div>
         </div>
 
         <div class="modal-overlay" id="dbModal">
