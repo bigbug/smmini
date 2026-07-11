@@ -1,170 +1,364 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Turnier-Anzeige Foyer</title>
-    <style>
-        :root { --primary: #1e293b; --accent: #e74c3c; --court: #27ae60; --bg: #0f172a; }
-        body { background: var(--bg); color: #f8fafc; padding: 20px; font-family: -apple-system, sans-serif; margin:0;}
-        .loading-box { text-align: center; max-width: 400px; margin: 150px auto; font-size: 24px; color: #38bdf8; font-weight: 700;}
-        
-        /* 50/50 Split Layout */
-        .foyer-container { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; height: 95vh; box-sizing: border-box; }
-        .foyer-column { display: flex; flex-direction: column; background: #1e293b; border-radius: 16px; padding: 25px; border: 1px solid #334155; height: 100%; box-sizing: border-box; overflow: hidden;}
-        .foyer-title { font-size: 32px; font-weight: 900; padding-bottom: 15px; border-bottom: 4px solid #475569; color:#38bdf8; margin-bottom: 20px;}
-        
-        /* Spielfelder-Grid */
-        .foyer-court-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; overflow-y: auto; }
-        .foyer-court-card { background: #0f172a; border: 4px solid #475569; border-radius: 16px; padding: 12px 10px; text-align: center; display: flex; flex-direction: column; gap: 8px; min-height: 160px; box-sizing: border-box; transition: border-color 0.3s;}
-        .foyer-court-header { display: flex; justify-content: space-between; align-items: center; padding: 0 8px; }
-        .foyer-court-num { font-size: 20px; font-weight: 900; }
-        .foyer-court-disz { font-size: 18px; font-weight: 900; padding: 3px 10px; border-radius: 6px; display: inline-block; border: 1px solid rgba(255,255,255,0.2);}
-        .foyer-court-team { font-size: 18px; font-weight: 800; color: #ffffff; line-height: 1.3;}
-        .foyer-live-timer { font-size: 14px; color: #f43f5e; background: rgba(244,63,94,0.15); padding: 4px 10px; border-radius: 6px; font-weight: 900; border: 1px solid rgba(244,63,94,0.3);}
-        .foyer-court-teams { display: flex; flex-direction: column; align-items: center; }
-        
-        /* Warteliste */
-        .foyer-warten-list { display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
-        .foyer-warten-item { background: #0f172a; padding: 16px; border-radius: 12px; border-left: 8px solid #475569; display: flex; align-items: center; font-size: 18px; font-weight: 700; transition: border-left-color 0.3s;}
-        .foyer-badge-disz { padding: 4px 10px; border-radius: 6px; font-size: 15px; margin-right: 12px; color: white; font-weight: 900; min-width: 60px; text-align: center; flex-shrink: 0;}
-        .foyer-warten-text { color: #ffffff; font-weight: 800; line-height: 1.2;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Turnier-Anzeige Foyer</title>
+  <style>
+    :root {
+      --primary: #1e293b;
+      --accent: #e74c3c;
+      --court: #27ae60;
+      --bg: #0f172a;
+    }
 
-        /* KATEGORIE-FARBEN */
-        .cat-he { --cat-color: #38bdf8; --cat-bg: rgba(56, 189, 248, 0.15); }
-        .cat-hd { --cat-color: #4ade80; --cat-bg: rgba(74, 222, 128, 0.15); }
-        .cat-de { --cat-color: #f472b6; --cat-bg: rgba(244, 114, 182, 0.15); }
-        .cat-dd { --cat-color: #fb923c; --cat-bg: rgba(251, 146, 60, 0.15); }
-        .cat-mx { --cat-color: #c084fc; --cat-bg: rgba(192, 132, 252, 0.15); }
+    body {
+      background: var(--bg);
+      color: #f8fafc;
+      padding: 20px;
+      font-family: -apple-system, sans-serif;
+      margin: 0;
+    }
 
-        .foyer-court-card.cat-he, .foyer-court-card.cat-hd, .foyer-court-card.cat-de, .foyer-court-card.cat-dd, .foyer-court-card.cat-mx { border-color: var(--cat-color); }
-        .foyer-court-card .foyer-court-num { color: var(--cat-color); }
-        .foyer-court-disz { color: var(--cat-color); background: var(--cat-bg); border-color: var(--cat-color); }
-        
-        .foyer-warten-item.cat-he, .foyer-warten-item.cat-hd, .foyer-warten-item.cat-de, .foyer-warten-item.cat-dd, .foyer-warten-item.cat-mx { border-left-color: var(--cat-color); }
-        .foyer-badge-disz { background: var(--cat-color); color: #0f172a; }
-    </style>
-    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+    .loading-box {
+      text-align: center;
+      max-width: 400px;
+      margin: 150px auto;
+      font-size: 24px;
+      color: #38bdf8;
+      font-weight: 700;
+    }
+
+    /* 50/50 Split Layout */
+    .foyer-container {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 25px;
+      height: 95vh;
+      box-sizing: border-box;
+    }
+
+    .foyer-column {
+      display: flex;
+      flex-direction: column;
+      background: #1e293b;
+      border-radius: 16px;
+      padding: 25px;
+      border: 1px solid #334155;
+      height: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .foyer-title {
+      font-size: 32px;
+      font-weight: 900;
+      padding-bottom: 15px;
+      border-bottom: 4px solid #475569;
+      color: #38bdf8;
+      margin-bottom: 20px;
+    }
+
+    /* Spielfelder-Grid */
+    .foyer-court-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      overflow-y: auto;
+    }
+
+    .foyer-court-card {
+      background: #0f172a;
+      border: 4px solid #475569;
+      border-radius: 16px;
+      padding: 12px 10px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 160px;
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+    }
+
+    .foyer-court-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 8px;
+    }
+
+    .foyer-court-num {
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .foyer-court-disz {
+      font-size: 18px;
+      font-weight: 900;
+      padding: 3px 10px;
+      border-radius: 6px;
+      display: inline-block;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .foyer-court-team {
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.3;
+    }
+
+    .foyer-live-timer {
+      font-size: 14px;
+      color: #f43f5e;
+      background: rgba(244, 63, 94, 0.15);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 900;
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
+    .foyer-court-teams {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Warteliste */
+    .foyer-warten-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+    }
+
+    .foyer-warten-item {
+      background: #0f172a;
+      padding: 16px;
+      border-radius: 12px;
+      border-left: 8px solid #475569;
+      display: flex;
+      align-items: center;
+      font-size: 18px;
+      font-weight: 700;
+      transition: border-left-color 0.3s;
+    }
+
+    .foyer-badge-disz {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 15px;
+      margin-right: 12px;
+      color: white;
+      font-weight: 900;
+      min-width: 60px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .foyer-warten-text {
+      color: #ffffff;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    /* KATEGORIE-FARBEN */
+    .cat-he {
+      --cat-color: #38bdf8;
+      --cat-bg: rgba(56, 189, 248, 0.15);
+    }
+
+    .cat-hd {
+      --cat-color: #4ade80;
+      --cat-bg: rgba(74, 222, 128, 0.15);
+    }
+
+    .cat-de {
+      --cat-color: #f472b6;
+      --cat-bg: rgba(244, 114, 182, 0.15);
+    }
+
+    .cat-dd {
+      --cat-color: #fb923c;
+      --cat-bg: rgba(251, 146, 60, 0.15);
+    }
+
+    .cat-mx {
+      --cat-color: #c084fc;
+      --cat-bg: rgba(192, 132, 252, 0.15);
+    }
+
+    .foyer-court-card.cat-he,
+    .foyer-court-card.cat-hd,
+    .foyer-court-card.cat-de,
+    .foyer-court-card.cat-dd,
+    .foyer-court-card.cat-mx {
+      border-color: var(--cat-color);
+    }
+
+    .foyer-court-card .foyer-court-num {
+      color: var(--cat-color);
+    }
+
+    .foyer-court-disz {
+      color: var(--cat-color);
+      background: var(--cat-bg);
+      border-color: var(--cat-color);
+    }
+
+    .foyer-warten-item.cat-he,
+    .foyer-warten-item.cat-hd,
+    .foyer-warten-item.cat-de,
+    .foyer-warten-item.cat-dd,
+    .foyer-warten-item.cat-mx {
+      border-left-color: var(--cat-color);
+    }
+
+    .foyer-badge-disz {
+      background: var(--cat-color);
+      color: #0f172a;
+    }
+  </style>
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 </head>
+
 <body>
 
-    <div id="setup" class="loading-box">
-        <p>🔄 Warte auf Turnierleitung...</p>
+  <div id="setup" class="loading-box">
+    <p>🔄 Warte auf Turnierleitung...</p>
+  </div>
+
+  <div id="foyer-view" class="foyer-container" style="display:none;">
+    <div class="foyer-column">
+      <div class="foyer-title">🏟️ Aktuelle Spiele</div>
+      <div class="foyer-court-grid" id="foyerCourtsTarget"></div>
     </div>
-
-    <div id="foyer-view" class="foyer-container" style="display:none;">
-        <div class="foyer-column">
-            <div class="foyer-title">🏟️ Aktuelle Spiele</div>
-            <div class="foyer-court-grid" id="foyerCourtsTarget"></div>
-        </div>
-        <div class="foyer-column">
-            <div class="foyer-title">⏳ Warteliste</div>
-            <div class="foyer-warten-list" id="foyerWartenTarget"></div>
-        </div>
+    <div class="foyer-column">
+      <div class="foyer-title">⏳ Warteliste</div>
+      <div class="foyer-warten-list" id="foyerWartenTarget"></div>
     </div>
+  </div>
 
-<script>
-let peer = null;
-let lastAdminVersion = null;
-let cachedData = null;
+  <script>
+    let peer = null;
+    let lastAdminVersion = null;
+    let cachedData = null;
+    let offlineReconnectInterval = null;
 
-document.addEventListener("DOMContentLoaded", () => {    
-    // Setup offline/online listeners
-    window.addEventListener('offline', () => {
+    document.addEventListener("DOMContentLoaded", () => {
+      // Setup offline/online listeners
+      window.addEventListener('offline', () => {
         document.getElementById('setup').innerHTML = '<p>📵 Keine Verbindung zur Regie. Zeige zwischengespeicherte Daten...</p>';
         document.getElementById('setup').style.display = 'block';
-    });
-    
-    window.addEventListener('online', () => {
+        offlineReconnectInterval = setInterval(verbindeZuRegie, 5000);
+      });
+
+      window.addEventListener('online', () => {
+        if (offlineReconnectInterval) {
+          clearInterval(offlineReconnectInterval);
+          offlineReconnectInterval = null;
+        }
         verbindeZuRegie();
+      });
+
+      verbindeZuRegie();
+
+      setInterval(() => {
+        document.querySelectorAll('.foyer-live-timer').forEach(el => {
+          let start = parseInt(el.getAttribute('data-start'));
+          if (start) {
+            let diff = Date.now() - start;
+            let mins = Math.floor(diff / 60000);
+            let secs = Math.floor((diff % 60000) / 1000);
+            el.innerHTML = `⏱️ ${mins}:${secs < 10 ? '0' : ''}${secs}`;
+          }
+        });
+      }, 1000);
     });
 
-    verbindeZuRegie();
-    
-    setInterval(() => {
-        document.querySelectorAll('.foyer-live-timer').forEach(el => {
-            let start = parseInt(el.getAttribute('data-start'));
-            if (start) {
-                let diff = Date.now() - start;
-                let mins = Math.floor(diff / 60000);
-                let secs = Math.floor((diff % 60000) / 1000);
-                el.innerHTML = `⏱️ ${mins}:${secs < 10 ? '0' : ''}${secs}`;
-            }
-        });
-    }, 1000);
-});
-
-function verbindeZuRegie() {
-    peer = new Peer({ secure: true, port: 443 });
-    peer.on('open', () => {
+    function verbindeZuRegie() {
+      // Clean up existing peer to prevent resource leaks
+      if (peer) {
+        peer.destroy();
+        peer = null;
+      }
+      peer = new Peer({
+        secure: false,
+        port: 9000,
+        host: "85.215.222.202",
+        path: "/",
+      });
+      peer.on('open', () => {
         let conn = peer.connect('badminton-turnier-leitung-live-id');
-        
+
         // Sobald die reine Verbindung steht (auch ohne Daten), schalten wir um!
         conn.on('open', () => {
-            document.getElementById('setup').style.display = 'none';
-            document.getElementById('foyer-view').style.display = 'grid';
-            // Initiale leere Ansicht rendern, bis Daten kommen
-            renderFoyer([], []);
+          document.getElementById('setup').style.display = 'none';
+          document.getElementById('foyer-view').style.display = 'grid';
+          // Initiale leere Ansicht rendern, bis Daten kommen
+          renderFoyer([], []);
         });
 
         conn.on('data', (data) => {
-            // Check if admin file has changed
-            const receivedAdminVersion = data.adminVersion;
-            
-            if (receivedAdminVersion && lastAdminVersion !== null && receivedAdminVersion !== lastAdminVersion) {
-                // Admin file has changed, reload the page
-                console.log('Admin file changed, reloading...');
-                location.reload();
-            }
-            
-            // Update last known admin version (not persisted)
-            if (receivedAdminVersion) {
-                lastAdminVersion = receivedAdminVersion;
-            }
-            
-            // Cache the data
-            if (data.liveCourts || data.wartenList) {
-                cachedData = { liveCourts: data.liveCourts || [], wartenList: data.wartenList || [] };
-                localStorage.setItem('foyer_data', JSON.stringify(cachedData));
-            }
-            
-            // Wenn echte Daten kommen (egal ob voll oder leer), Listen aktualisieren
-            renderFoyer(data.liveCourts || [], data.wartenList || []);
+          // Check if admin file has changed
+          const receivedAdminVersion = data.adminVersion;
+
+          if (receivedAdminVersion && lastAdminVersion !== null && receivedAdminVersion !== lastAdminVersion) {
+            // Admin file has changed, reload the page
+            console.log('Admin file changed, reloading...');
+            location.reload();
+          }
+
+          // Update last known admin version (not persisted)
+          if (receivedAdminVersion) {
+            lastAdminVersion = receivedAdminVersion;
+          }
+
+          // Cache the data
+          if (data.liveCourts || data.wartenList) {
+            cachedData = { liveCourts: data.liveCourts || [], wartenList: data.wartenList || [] };
+            localStorage.setItem('foyer_data', JSON.stringify(cachedData));
+          }
+
+          // Wenn echte Daten kommen (egal ob voll oder leer), Listen aktualisieren
+          renderFoyer(data.liveCourts || [], data.wartenList || []);
         });
 
         conn.on('close', () => {
-            document.getElementById('setup').innerHTML = '<p>🔄 Verbindung unterbrochen. Versuche neu zu verbinden...</p>';
-            document.getElementById('setup').style.display = 'block';
-            document.getElementById('foyer-view').style.display = 'none';
-            setTimeout(verbindeZuRegie, 3000);
+          document.getElementById('setup').innerHTML = '<p>🔄 Verbindung unterbrochen. Versuche neu zu verbinden...</p>';
+          document.getElementById('setup').style.display = 'block';
+          document.getElementById('foyer-view').style.display = 'none';
+          setTimeout(verbindeZuRegie, 3000);
         });
-    });
-    peer.on('error', () => {
+      });
+      peer.on('error', () => {
         setTimeout(verbindeZuRegie, 3000);
-    });
-}
+      });
+    }
 
-function getCategoryClass(disz) {
-    if (!disz) return '';
-    let d = disz.toUpperCase();
-    if (d.startsWith('HE')) return 'cat-he';
-    if (d.startsWith('HD')) return 'cat-hd';
-    if (d.startsWith('DE')) return 'cat-de';
-    if (d.startsWith('DD')) return 'cat-dd';
-    if (d.startsWith('MX')) return 'cat-mx';
-    return '';
-}
+    function getCategoryClass(disz) {
+      if (!disz) return '';
+      let d = disz.toUpperCase();
+      if (d.startsWith('HE')) return 'cat-he';
+      if (d.startsWith('HD')) return 'cat-hd';
+      if (d.startsWith('DE')) return 'cat-de';
+      if (d.startsWith('DD')) return 'cat-dd';
+      if (d.startsWith('MX')) return 'cat-mx';
+      return '';
+    }
 
-function renderFoyer(liveCourts, wartenList) {
-    let courtsTarget = document.getElementById('foyerCourtsTarget');
-    let wartenTarget = document.getElementById('foyerWartenTarget');
+    function renderFoyer(liveCourts, wartenList) {
+      let courtsTarget = document.getElementById('foyerCourtsTarget');
+      let wartenTarget = document.getElementById('foyerWartenTarget');
 
-    // Spielfelder
-    courtsTarget.innerHTML = (liveCourts.length === 0) 
+      // Spielfelder
+      courtsTarget.innerHTML = (liveCourts.length === 0)
         ? `<div style="grid-column: 1/-1; text-align:center; color:#64748b; margin-top:50px; font-size:20px;">Alle Felder frei.</div>`
         : liveCourts.map(c => {
-            let catClass = getCategoryClass(c.disz);
-            return `
+          let catClass = getCategoryClass(c.disz);
+          return `
             <div class="foyer-court-card ${catClass}">
                 <div class="foyer-court-header">
                     <span class="foyer-court-disz">${c.disz}</span>
@@ -179,18 +373,19 @@ function renderFoyer(liveCourts, wartenList) {
             </div>`;
         }).join('');
 
-    // Warteliste
-    wartenTarget.innerHTML = (wartenList.length === 0)
+      // Warteliste
+      wartenTarget.innerHTML = (wartenList.length === 0)
         ? `<p style="text-align:center; color:#64748b; font-size:18px; margin-top:50px;">Keine wartenden Spiele.</p>`
         : wartenList.map(w => {
-            let catClass = getCategoryClass(w.disz);
-            return `
+          let catClass = getCategoryClass(w.disz);
+          return `
             <div class="foyer-warten-item ${catClass}">
                 <span class="foyer-badge-disz">${w.disz}</span>
                 <span class="foyer-warten-text">${w.p1.replace(' / ', ' & ')}<br><span style="color:#64748b; font-size:14px; font-weight:bold;">vs</span><br>${w.p2.replace(' / ', ' & ')}</span>
             </div>`;
         }).join('');
-}
-</script>
+    }
+  </script>
 </body>
+
 </html>

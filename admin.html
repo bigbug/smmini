@@ -1,290 +1,460 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Badminton Live-Regie (Klassen A/B)</title>
-    <style>
-        :root { --primary: #2c3e50; --accent: #e74c3c; --court: #27ae60; --bg: #f1f5f9; }
-        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 15px; color: #333; }
-        
-        #login-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; }
-        .login-box { background:#1e293b; padding:30px; border-radius:12px; border:1px solid #334155; text-align:center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); max-width:320px; width:100%; }
-        .login-input { padding:12px; font-size:18px; border-radius:6px; border:1px solid #cbd5e1; width:100%; box-sizing:border-box; margin-top:15px; text-align:center; font-weight:bold; }
-        
-        .header-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: white; padding: 15px 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        label { display: block; font-weight: bold; margin-top: 10px; font-size: 13px; }
-        select, input, textarea { width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
-        .names-group { display: flex; gap: 8px; margin-top: 4px; }
-        .btn { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 12px;}
-        .btn-danger { background: var(--accent); }
-        .btn-success { background: var(--court); }
-        .admin-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .badge { background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; color: #1e293b; }
-        .admin-timer { font-size: 11px; color: #f43f5e; font-weight: bold; }
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 100; }
-        .modal-card { background: white; padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; }
-    </style>
-    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Badminton Live-Regie (Klassen A/B)</title>
+  <style>
+    :root {
+      --primary: #2c3e50;
+      --accent: #e74c3c;
+      --court: #27ae60;
+      --bg: #f1f5f9;
+    }
+
+    body {
+      font-family: -apple-system, sans-serif;
+      background: var(--bg);
+      margin: 15px;
+      color: #333;
+    }
+
+    #login-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #0f172a;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .login-box {
+      background: #1e293b;
+      padding: 30px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      max-width: 320px;
+      width: 100%;
+    }
+
+    .login-input {
+      padding: 12px;
+      font-size: 18px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      background: white;
+      padding: 15px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-top: 10px;
+      font-size: 13px;
+    }
+
+    select,
+    input,
+    textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    .names-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      width: 100%;
+      margin-top: 12px;
+    }
+
+    .btn-danger {
+      background: var(--accent);
+    }
+
+    .btn-success {
+      background: var(--court);
+    }
+
+    .admin-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .badge {
+      background: #e2e8f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: bold;
+      color: #1e293b;
+    }
+
+    .admin-timer {
+      font-size: 11px;
+      color: #f43f5e;
+      font-weight: bold;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .modal-card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+    }
+  </style>
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 </head>
+
 <body>
 
-    <div id="login-overlay">
-        <div class="login-box">
-            <h2 style="margin:0 0 10px 0; color:#38bdf8;">🔒 Regie geschützt</h2>
-            <p style="margin:0; color:#94a3b8; font-size:14px;">Bitte Passwort eingeben:</p>
-            <input type="password" id="pwField" class="login-input" placeholder="••••" onkeydown="checkLoginEnter(event)">
-            <button class="btn btn-success" style="margin-top:15px;" onclick="validatePassword()">Einloggen</button>
-        </div>
+  <div id="login-overlay">
+    <div class="login-box">
+      <h2 style="margin:0 0 10px 0; color:#38bdf8;">🔒 Regie geschützt</h2>
+      <p style="margin:0; color:#94a3b8; font-size:14px;">Bitte Passwort eingeben:</p>
+      <input type="password" id="pwField" class="login-input" placeholder="••••" onkeydown="checkLoginEnter(event)">
+      <button class="btn btn-success" style="margin-top:15px;" onclick="validatePassword()">Einloggen</button>
+    </div>
+  </div>
+
+  <div id="admin-content" style="display:none;">
+    <div class="header-container">
+      <div>
+        <h1>🏸 Badminton Live-Regie</h1>
+        <p style="margin: 0; color: #64748b; font-size: 14px;">Status: <span id="peer-status"
+            style="color:orange; font-weight:bold;">Verbinde zum Netzwerk...</span></p>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn" style="background: #475569; margin-top:0; width:auto;" onclick="toggleModal(true)">👥
+          Spieler-Datenbank</button>
+        <button class="btn btn-success" style="margin-top:0; width:auto;" onclick="broadcastDaten()">📤 Senden</button>
+      </div>
     </div>
 
-    <div id="admin-content" style="display:none;">
-        <div class="header-container">
-            <div>
-                <h1>🏸 Badminton Live-Regie</h1>
-                <p style="margin: 0; color: #64748b; font-size: 14px;">Status: <span id="peer-status" style="color:orange; font-weight:bold;">Verbinde zum Netzwerk...</span></p>
-            </div>
-            <div style="display: flex; gap: 8px;">
-                <button class="btn" style="background: #475569; margin-top:0; width:auto;" onclick="toggleModal(true)">👥 Spieler-Datenbank</button>
-                <button class="btn btn-success" style="margin-top:0; width:auto;" onclick="broadcastDaten()">📤 Senden</button>
-            </div>
-        </div>
-
-        <div class="modal-overlay" id="dbModal">
-            <div class="modal-card">
-                <h2>👥 Spieler-Datenbank</h2>
-                <textarea id="spielerDatenbank" rows="10" placeholder="Ein Name pro Zeile" oninput="aktualisiereDatalist()"></textarea>
-                <button class="btn btn-success" onclick="toggleModal(false)">Schließen</button>
-            </div>
-        </div>
-        <datalist id="spielerVorschlaege"></datalist>
-
-        <div class="grid-layout">
-            <div class="card">
-                <h2>🏟️ Spielfeld belegen</h2>
-                <form id="courtForm" onsubmit="addCourtMatch(event)">
-                    <label>Feld-Nummer:</label>
-                    <select id="courtId">
-                        <option value="1">Feld 1</option><option value="2">Feld 2</option><option value="3">Feld 3</option>
-                        <option value="4">Feld 4</option><option value="5">Feld 5</option><option value="6">Feld 6</option>
-                        <option value="7">Feld 7</option><option value="8">Feld 8</option><option value="9">Feld 9</option>
-                    </select>
-                    <label>Disziplin & Klasse:</label>
-                    <select id="courtDisz" onchange="toggleFormFields('court')">
-                        <option value="HE A">HE A</option><option value="HE B">HE B</option>
-                        <option value="HD A">HD A</option><option value="HD B">HD B</option>
-                        <option value="DE A">DE A</option><option value="DE B">DE B</option>
-                        <option value="DD A">DD A</option><option value="DD B">DD B</option>
-                        <option value="MX A">MX A</option><option value="MX B">MX B</option>
-                    </select>
-                    <label>Partei 1:</label>
-                    <div class="names-group">
-                        <input type="text" id="courtP1_1" placeholder="Spieler 1" list="spielerVorschlaege" required>
-                        <input type="text" id="courtP1_2" placeholder="Spieler 2" list="spielerVorschlaege" style="display:none;">
-                    </div>
-                    <label>Partei 2:</label>
-                    <div class="names-group">
-                        <input type="text" id="courtP2_1" placeholder="Spieler 1" list="spielerVorschlaege" required>
-                        <input type="text" id="courtP2_2" placeholder="Spieler 2" list="spielerVorschlaege" style="display:none;">
-                    </div>
-                    <button type="submit" class="btn">Auf Feld platzieren</button>
-                </form>
-                <h3>Aktive Felder:</h3>
-                <div id="adminCourtsList"></div>
-            </div>
-
-            <div class="card">
-                <h2>⏳ Warteliste pflegen</h2>
-                <form id="wartenForm" onsubmit="addWartenMatch(event)">
-                    <label>Disziplin & Klasse:</label>
-                    <select id="wartenDisz" onchange="toggleFormFields('warten')">
-                        <option value="HE A">HE A</option><option value="HE B">HE B</option>
-                        <option value="HD A">HD A</option><option value="HD B">HD B</option>
-                        <option value="DE A">DE A</option><option value="DE B">DE B</option>
-                        <option value="DD A">DD A</option><option value="DD B">DD B</option>
-                        <option value="MX A">MX A</option><option value="MX B">MX B</option>
-                    </select>
-                    <label>Partei 1:</label>
-                    <div class="names-group">
-                        <input type="text" id="wartenP1_1" placeholder="Spieler 1" list="spielerVorschlaege" required>
-                        <input type="text" id="wartenP1_2" placeholder="Spieler 2" list="spielerVorschlaege" style="display:none;">
-                    </div>
-                    <label>Partei 2:</label>
-                    <div class="names-group">
-                        <input type="text" id="wartenP2_1" placeholder="Spieler 1" list="spielerVorschlaege" required>
-                        <input type="text" id="wartenP2_2" placeholder="Spieler 2" list="spielerVorschlaege" style="display:none;">
-                    </div>
-                    <button type="submit" class="btn" style="background:#34495e;">Zur Warteliste hinzufügen</button>
-                </form>
-                <h3>Aktuelle Warteliste:</h3>
-                <div id="adminWartenList"></div>
-            </div>
-        </div>
+    <div class="modal-overlay" id="dbModal">
+      <div class="modal-card">
+        <h2>👥 Spieler-Datenbank</h2>
+        <textarea id="spielerDatenbank" rows="10" placeholder="Ein Name pro Zeile"
+          oninput="aktualisiereDatalist()"></textarea>
+        <button class="btn btn-success" onclick="toggleModal(false)">Schließen</button>
+      </div>
     </div>
+    <datalist id="spielerVorschlaege"></datalist>
 
-<script>
-let liveCourts = [];
-let wartenList = [];
-let peer = null;
-let connections = [];
-let adminFileVersion = document.lastModified;
+    <div class="grid-layout">
+      <div class="card">
+        <h2>🏟️ Spielfeld belegen</h2>
+        <form id="courtForm" onsubmit="addCourtMatch(event)">
+          <label>Feld-Nummer:</label>
+          <select id="courtId">
+            <option value="1">Feld 1</option>
+            <option value="2">Feld 2</option>
+            <option value="3">Feld 3</option>
+            <option value="4">Feld 4</option>
+            <option value="5">Feld 5</option>
+            <option value="6">Feld 6</option>
+            <option value="7">Feld 7</option>
+            <option value="8">Feld 8</option>
+            <option value="9">Feld 9</option>
+          </select>
+          <label>Disziplin & Klasse:</label>
+          <select id="courtDisz" onchange="toggleFormFields('court')">
+            <option value="HE A">HE A</option>
+            <option value="HE B">HE B</option>
+            <option value="HD A">HD A</option>
+            <option value="HD B">HD B</option>
+            <option value="DE A">DE A</option>
+            <option value="DE B">DE B</option>
+            <option value="DD A">DD A</option>
+            <option value="DD B">DD B</option>
+            <option value="MX A">MX A</option>
+            <option value="MX B">MX B</option>
+          </select>
+          <label>Partei 1:</label>
+          <div class="names-group">
+            <input type="text" id="courtP1_1" placeholder="Spieler 1" list="spielerVorschlaege" required>
+            <input type="text" id="courtP1_2" placeholder="Spieler 2" list="spielerVorschlaege" style="display:none;">
+          </div>
+          <label>Partei 2:</label>
+          <div class="names-group">
+            <input type="text" id="courtP2_1" placeholder="Spieler 1" list="spielerVorschlaege" required>
+            <input type="text" id="courtP2_2" placeholder="Spieler 2" list="spielerVorschlaege" style="display:none;">
+          </div>
+          <button type="submit" class="btn">Auf Feld platzieren</button>
+        </form>
+        <h3>Aktive Felder:</h3>
+        <div id="adminCourtsList"></div>
+      </div>
 
-document.addEventListener("DOMContentLoaded", () => {
-    if (sessionStorage.getItem('admin_authenticated') === 'true') {
+      <div class="card">
+        <h2>⏳ Warteliste pflegen</h2>
+        <form id="wartenForm" onsubmit="addWartenMatch(event)">
+          <label>Disziplin & Klasse:</label>
+          <select id="wartenDisz" onchange="toggleFormFields('warten')">
+            <option value="HE A">HE A</option>
+            <option value="HE B">HE B</option>
+            <option value="HD A">HD A</option>
+            <option value="HD B">HD B</option>
+            <option value="DE A">DE A</option>
+            <option value="DE B">DE B</option>
+            <option value="DD A">DD A</option>
+            <option value="DD B">DD B</option>
+            <option value="MX A">MX A</option>
+            <option value="MX B">MX B</option>
+          </select>
+          <label>Partei 1:</label>
+          <div class="names-group">
+            <input type="text" id="wartenP1_1" placeholder="Spieler 1" list="spielerVorschlaege" required>
+            <input type="text" id="wartenP1_2" placeholder="Spieler 2" list="spielerVorschlaege" style="display:none;">
+          </div>
+          <label>Partei 2:</label>
+          <div class="names-group">
+            <input type="text" id="wartenP2_1" placeholder="Spieler 1" list="spielerVorschlaege" required>
+            <input type="text" id="wartenP2_2" placeholder="Spieler 2" list="spielerVorschlaege" style="display:none;">
+          </div>
+          <button type="submit" class="btn" style="background:#34495e;">Zur Warteliste hinzufügen</button>
+        </form>
+        <h3>Aktuelle Warteliste:</h3>
+        <div id="adminWartenList"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let liveCourts = [];
+    let wartenList = [];
+    let peer = null;
+    let connections = [];
+    let adminFileVersion = document.lastModified;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      if (sessionStorage.getItem('admin_authenticated') === 'true') {
         unlockAdmin();
-    } else {
+      } else {
         document.getElementById('pwField').focus();
-    }
-});
+      }
+    });
 
-function checkLoginEnter(e) { if (e.key === 'Enter') { validatePassword(); } }
+    function checkLoginEnter(e) { if (e.key === 'Enter') { validatePassword(); } }
 
-function validatePassword() {
-    let input = document.getElementById('pwField').value;
-    if (input === "2095") {
+    function validatePassword() {
+      let input = document.getElementById('pwField').value;
+      if (input === "2095") {
         sessionStorage.setItem('admin_authenticated', 'true');
         unlockAdmin();
-    } else {
+      } else {
         alert("Falsches Passwort!");
         document.getElementById('pwField').value = "";
+      }
     }
-}
 
-function loadState() {
-    const savedCourts = localStorage.getItem('liveCourts');
-    const savedWarten = localStorage.getItem('wartenList');
-    if (savedCourts) liveCourts = JSON.parse(savedCourts);
-    if (savedWarten) wartenList = JSON.parse(savedWarten);
-}
+    function loadState() {
+      const savedCourts = localStorage.getItem('liveCourts');
+      const savedWarten = localStorage.getItem('wartenList');
+      if (savedCourts) liveCourts = JSON.parse(savedCourts);
+      if (savedWarten) wartenList = JSON.parse(savedWarten);
+    }
 
-function saveState() {
-    localStorage.setItem('liveCourts', JSON.stringify(liveCourts));
-    localStorage.setItem('wartenList', JSON.stringify(wartenList));
-}
+    function saveState() {
+      localStorage.setItem('liveCourts', JSON.stringify(liveCourts));
+      localStorage.setItem('wartenList', JSON.stringify(wartenList));
+    }
 
-function unlockAdmin() {
-    document.getElementById('login-overlay').style.display = 'none';
-    document.getElementById('admin-content').style.display = 'block';
-    
-    if(localStorage.getItem('foyer_datenbank')) {
+    function unlockAdmin() {
+      document.getElementById('login-overlay').style.display = 'none';
+      document.getElementById('admin-content').style.display = 'block';
+
+      if (localStorage.getItem('foyer_datenbank')) {
         document.getElementById('spielerDatenbank').value = localStorage.getItem('foyer_datenbank');
         aktualisiereDatalist();
-    }
-    loadState();
-    toggleFormFields('court');
-    toggleFormFields('warten');
-    initPeer();
-    renderAdminLists();
-    
-    setInterval(() => {
-        document.querySelectorAll('.admin-timer').forEach(el => {
-            let start = parseInt(el.getAttribute('data-start'));
-            if (start) {
-                let diff = Date.now() - start;
-                let mins = Math.floor(diff / 60000);
-                let secs = Math.floor((diff % 60000) / 1000);
-                el.innerHTML = `⏱️ ${mins}:${secs < 10 ? '0' : ''}${secs}`;
-            }
-        });
-    }, 1000);
-}
+      }
+      loadState();
+      toggleFormFields('court');
+      toggleFormFields('warten');
+      initPeer();
+      renderAdminLists();
 
-function initPeer() {
-    peer = new Peer('badminton-turnier-leitung-live-id', { secure: true, port: 443 });
-    peer.on('open', () => {
+      setInterval(() => {
+        document.querySelectorAll('.admin-timer').forEach(el => {
+          let start = parseInt(el.getAttribute('data-start'));
+          if (start) {
+            let diff = Date.now() - start;
+            let mins = Math.floor(diff / 60000);
+            let secs = Math.floor((diff % 60000) / 1000);
+            el.innerHTML = `⏱️ ${mins}:${secs < 10 ? '0' : ''}${secs}`;
+          }
+        });
+      }, 1000);
+    }
+
+    function initPeer() {
+      peer = new Peer('badminton-turnier-leitung-live-id', {
+        secure: false,
+        port: 9000,
+        host: "85.215.222.202"
+      });
+      peer.on('open', () => {
         document.getElementById('peer-status').innerHTML = "🟢 Bereit zum Senden (Laptop aktiv lassen)";
         document.getElementById('peer-status').style.color = "#27ae60";
-    });
-    peer.on('connection', (conn) => {
+      });
+      peer.on('connection', (conn) => {
         connections.push(conn);
         // HIER IST DIE KORREKTUR: Sobald sich ein Foyer-Monitor verbindet, 
         // schicken wir SOFORT den aktuellen Stand rüber, ohne dass gewartet werden muss!
-        sendeDatenAn(conn); 
-    });
-}
+        sendeDatenAn(conn);
+      });
+    }
 
-function broadcastDaten() {
-    connections = connections.filter(conn => conn.peerConnection && conn.peerConnection.connectionState !== 'closed');
-    connections.forEach(conn => sendeDatenAn(conn));
-    saveState();
-}
+    function broadcastDaten() {
+      connections = connections.filter(conn => conn.peerConnection && conn.peerConnection.connectionState !== 'closed');
+      connections.forEach(conn => sendeDatenAn(conn));
+      saveState();
+    }
 
-function sendeDatenAn(conn) { 
-    conn.send({ liveCourts, wartenList, adminVersion: adminFileVersion }); 
-}
-function toggleModal(show) { document.getElementById('dbModal').style.display = show ? 'flex' : 'none'; }
+    function sendeDatenAn(conn) {
+      conn.send({ liveCourts, wartenList, adminVersion: adminFileVersion });
+    }
+    function toggleModal(show) { document.getElementById('dbModal').style.display = show ? 'flex' : 'none'; }
 
-function toggleFormFields(prefix) {
-    let disz = document.getElementById(prefix + 'Disz').value;
-    let brauchtZwei = disz.startsWith('HD') || disz.startsWith('DD') || disz.startsWith('MX');
-    document.getElementById(prefix + 'P1_2').style.display = brauchtZwei ? 'block' : 'none';
-    document.getElementById(prefix + 'P2_2').style.display = brauchtZwei ? 'block' : 'none';
-    document.getElementById(prefix + 'P1_2').required = brauchtZwei;
-    document.getElementById(prefix + 'P2_2').required = brauchtZwei;
-}
+    function toggleFormFields(prefix) {
+      let disz = document.getElementById(prefix + 'Disz').value;
+      let brauchtZwei = disz.startsWith('HD') || disz.startsWith('DD') || disz.startsWith('MX');
+      document.getElementById(prefix + 'P1_2').style.display = brauchtZwei ? 'block' : 'none';
+      document.getElementById(prefix + 'P2_2').style.display = brauchtZwei ? 'block' : 'none';
+      document.getElementById(prefix + 'P1_2').required = brauchtZwei;
+      document.getElementById(prefix + 'P2_2').required = brauchtZwei;
+    }
 
-function aktualisiereDatalist() {
-    let text = document.getElementById('spielerDatenbank').value;
-    let datalist = document.getElementById('spielerVorschlaege');
-    let namen = text.split('\n').map(n => n.trim()).filter(n => n.length > 0);
-    datalist.innerHTML = namen.map(n => `<option value="${n}"></option>`).join('');
-    localStorage.setItem('foyer_datenbank', text);
-}
+    function aktualisiereDatalist() {
+      let text = document.getElementById('spielerDatenbank').value;
+      let datalist = document.getElementById('spielerVorschlaege');
+      let namen = text.split('\n').map(n => n.trim()).filter(n => n.length > 0);
+      datalist.innerHTML = namen.map(n => `<option value="${n}"></option>`).join('');
+      localStorage.setItem('foyer_datenbank', text);
+    }
 
-function addCourtMatch(e) {
-    e.preventDefault();
-    let id = parseInt(document.getElementById('courtId').value);
-    if (liveCourts.some(c => c.id === id)) { alert(`Feld ${id} besetzt!`); return; }
-    let disz = document.getElementById('courtDisz').value;
-    let p1 = document.getElementById('courtP1_1').value + (document.getElementById('courtP1_2').style.display !== 'none' ? ' / ' + document.getElementById('courtP1_2').value : '');
-    let p2 = document.getElementById('courtP2_1').value + (document.getElementById('courtP2_2').style.display !== 'none' ? ' / ' + document.getElementById('courtP2_2').value : '');
-    liveCourts.push({ id, disz, p1, p2, startTime: Date.now() });
-    liveCourts.sort((a,b) => a.id - b.id);
-    document.getElementById('courtForm').reset();
-    toggleFormFields('court');
-    renderAdminLists();
-    broadcastDaten();
-}
+    function addCourtMatch(e) {
+      e.preventDefault();
+      let id = parseInt(document.getElementById('courtId').value);
+      if (liveCourts.some(c => c.id === id)) { alert(`Feld ${id} besetzt!`); return; }
+      let disz = document.getElementById('courtDisz').value;
+      let p1 = document.getElementById('courtP1_1').value + (document.getElementById('courtP1_2').style.display !== 'none' ? ' / ' + document.getElementById('courtP1_2').value : '');
+      let p2 = document.getElementById('courtP2_1').value + (document.getElementById('courtP2_2').style.display !== 'none' ? ' / ' + document.getElementById('courtP2_2').value : '');
+      liveCourts.push({ id, disz, p1, p2, startTime: Date.now() });
+      liveCourts.sort((a, b) => a.id - b.id);
+      document.getElementById('courtForm').reset();
+      toggleFormFields('court');
+      renderAdminLists();
+      broadcastDaten();
+    }
 
-function addWartenMatch(e) {
-    e.preventDefault();
-    let disz = document.getElementById('wartenDisz').value;
-    let p1 = document.getElementById('wartenP1_1').value + (document.getElementById('wartenP1_2').style.display !== 'none' ? ' / ' + document.getElementById('wartenP1_2').value : '');
-    let p2 = document.getElementById('wartenP2_1').value + (document.getElementById('wartenP2_2').style.display !== 'none' ? ' / ' + document.getElementById('wartenP2_2').value : '');
-    wartenList.push({ id: Date.now(), disz, p1, p2 });
-    document.getElementById('wartenForm').reset();
-    toggleFormFields('warten');
-    renderAdminLists();
-    broadcastDaten();
-}
+    function addWartenMatch(e) {
+      e.preventDefault();
+      let disz = document.getElementById('wartenDisz').value;
+      let p1 = document.getElementById('wartenP1_1').value + (document.getElementById('wartenP1_2').style.display !== 'none' ? ' / ' + document.getElementById('wartenP1_2').value : '');
+      let p2 = document.getElementById('wartenP2_1').value + (document.getElementById('wartenP2_2').style.display !== 'none' ? ' / ' + document.getElementById('wartenP2_2').value : '');
+      wartenList.push({ id: Date.now(), disz, p1, p2 });
+      document.getElementById('wartenForm').reset();
+      toggleFormFields('warten');
+      renderAdminLists();
+      broadcastDaten();
+    }
 
-function wartenZuFeld(wartenId) {
-    let match = wartenList.find(w => w.id === wartenId);
-    let feldNummer = prompt("Auf welches Feld (1-9)?", "1");
-    let id = parseInt(feldNummer);
-    if(isNaN(id) || id < 1 || id > 9 || liveCourts.some(c => c.id === id)) { alert("Ungültig oder besetzt!"); return; }
-    liveCourts.push({ id, disz: match.disz, p1: match.p1, p2: match.p2, startTime: Date.now() });
-    liveCourts.sort((a,b) => a.id - b.id);
-    wartenList = wartenList.filter(w => w.id !== wartenId);
-    renderAdminLists();
-    broadcastDaten();
-}
+    function wartenZuFeld(wartenId) {
+      let match = wartenList.find(w => w.id === wartenId);
+      let feldNummer = prompt("Auf welches Feld (1-9)?", "1");
+      let id = parseInt(feldNummer);
+      if (isNaN(id) || id < 1 || id > 9 || liveCourts.some(c => c.id === id)) { alert("Ungültig oder besetzt!"); return; }
+      liveCourts.push({ id, disz: match.disz, p1: match.p1, p2: match.p2, startTime: Date.now() });
+      liveCourts.sort((a, b) => a.id - b.id);
+      wartenList = wartenList.filter(w => w.id !== wartenId);
+      renderAdminLists();
+      broadcastDaten();
+    }
 
-function removeCourt(id) { liveCourts = liveCourts.filter(c => c.id !== id); renderAdminLists(); broadcastDaten(); }
-function removeWarten(id) { wartenList = wartenList.filter(w => w.id !== id); renderAdminLists(); broadcastDaten(); }
+    function removeCourt(id) { liveCourts = liveCourts.filter(c => c.id !== id); renderAdminLists(); broadcastDaten(); }
+    function removeWarten(id) { wartenList = wartenList.filter(w => w.id !== id); renderAdminLists(); broadcastDaten(); }
 
-function renderAdminLists() {
-    let courtTarget = document.getElementById('adminCourtsList');
-    courtTarget.innerHTML = liveCourts.length === 0 ? "<p>Keine Spiele.</p>" : liveCourts.map(c => `
+    function renderAdminLists() {
+      let courtTarget = document.getElementById('adminCourtsList');
+      courtTarget.innerHTML = liveCourts.length === 0 ? "<p>Keine Spiele.</p>" : liveCourts.map(c => `
         <div class="admin-item">
             <div><strong>Feld ${c.id}</strong> <span class="badge">${c.disz}</span><br><span>${c.p1} vs ${c.p2}</span><br><span class="admin-timer" data-start="${c.startTime}">⏱️ 0:00</span></div>
             <button class="btn btn-danger btn-small" onclick="removeCourt(${c.id})">Frei</button>
         </div>`).join('');
-    
-    let wartenTarget = document.getElementById('adminWartenList');
-    wartenTarget.innerHTML = wartenList.length === 0 ? "<p>Warteliste leer.</p>" : wartenList.map(w => `
+
+      let wartenTarget = document.getElementById('adminWartenList');
+      wartenTarget.innerHTML = wartenList.length === 0 ? "<p>Warteliste leer.</p>" : wartenList.map(w => `
         <div class="admin-item">
             <div><span class="badge">${w.disz}</span><br><span>${w.p1} vs ${w.p2}</span></div>
             <div class="flex-actions">
@@ -292,7 +462,8 @@ function renderAdminLists() {
                 <button class="btn btn-danger btn-small" onclick="removeWarten(${w.id})">✕</button>
             </div>
         </div>`).join('');
-}
-</script>
+    }
+  </script>
 </body>
+
 </html>
