@@ -148,6 +148,18 @@ function validatePassword() {
     }
 }
 
+function loadState() {
+    const savedCourts = localStorage.getItem('liveCourts');
+    const savedWarten = localStorage.getItem('wartenList');
+    if (savedCourts) liveCourts = JSON.parse(savedCourts);
+    if (savedWarten) wartenList = JSON.parse(savedWarten);
+}
+
+function saveState() {
+    localStorage.setItem('liveCourts', JSON.stringify(liveCourts));
+    localStorage.setItem('wartenList', JSON.stringify(wartenList));
+}
+
 function unlockAdmin() {
     document.getElementById('login-overlay').style.display = 'none';
     document.getElementById('admin-content').style.display = 'block';
@@ -156,9 +168,11 @@ function unlockAdmin() {
         document.getElementById('spielerDatenbank').value = localStorage.getItem('foyer_datenbank');
         aktualisiereDatalist();
     }
+    loadState();
     toggleFormFields('court');
     toggleFormFields('warten');
     initPeer();
+    renderAdminLists();
     
     setInterval(() => {
         document.querySelectorAll('.admin-timer').forEach(el => {
@@ -190,6 +204,7 @@ function initPeer() {
 function broadcastDaten() {
     connections = connections.filter(conn => conn.peerConnection && conn.peerConnection.connectionState !== 'closed');
     connections.forEach(conn => sendeDatenAn(conn));
+    saveState();
 }
 
 function sendeDatenAn(conn) { conn.send({ liveCourts, wartenList }); }
