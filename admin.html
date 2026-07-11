@@ -126,6 +126,7 @@ let liveCourts = [];
 let wartenList = [];
 let peer = null;
 let connections = [];
+let adminFileVersion = document.lastModified;
 
 document.addEventListener("DOMContentLoaded", () => {
     if (sessionStorage.getItem('admin_authenticated') === 'true') {
@@ -207,7 +208,9 @@ function broadcastDaten() {
     saveState();
 }
 
-function sendeDatenAn(conn) { conn.send({ liveCourts, wartenList }); }
+function sendeDatenAn(conn) { 
+    conn.send({ liveCourts, wartenList, adminVersion: adminFileVersion }); 
+}
 function toggleModal(show) { document.getElementById('dbModal').style.display = show ? 'flex' : 'none'; }
 
 function toggleFormFields(prefix) {

@@ -63,8 +63,20 @@
 
 <script>
 let peer = null;
+let lastAdminVersion = null;
+let cachedData = null;
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {    
+    // Setup offline/online listeners
+    window.addEventListener('offline', () => {
+        document.getElementById('setup').innerHTML = '<p>📵 Keine Verbindung zur Regie. Zeige zwischengespeicherte Daten...</p>';
+        document.getElementById('setup').style.display = 'block';
+    });
+    
+    window.addEventListener('online', () => {
+        verbindeZuRegie();
+    });
+
     verbindeZuRegie();
     
     setInterval(() => {
@@ -94,11 +106,32 @@ function verbindeZuRegie() {
         });
 
         conn.on('data', (data) => {
+            // Check if admin file has changed
+            const receivedAdminVersion = data.adminVersion;
+            
+            if (receivedAdminVersion && lastAdminVersion !== null && receivedAdminVersion !== lastAdminVersion) {
+                // Admin file has changed, reload the page
+                console.log('Admin file changed, reloading...');
+                location.reload();
+            }
+            
+            // Update last known admin version (not persisted)
+            if (receivedAdminVersion) {
+                lastAdminVersion = receivedAdminVersion;
+            }
+            
+            // Cache the data
+            if (data.liveCourts || data.wartenList) {
+                cachedData = { liveCourts: data.liveCourts || [], wartenList: data.wartenList || [] };
+                localStorage.setItem('foyer_data', JSON.stringify(cachedData));
+            }
+            
             // Wenn echte Daten kommen (egal ob voll oder leer), Listen aktualisieren
             renderFoyer(data.liveCourts || [], data.wartenList || []);
         });
 
         conn.on('close', () => {
+            document.getElementById('setup').innerHTML = '<p>🔄 Verbindung unterbrochen. Versuche neu zu verbinden...</p>';
             document.getElementById('setup').style.display = 'block';
             document.getElementById('foyer-view').style.display = 'none';
             setTimeout(verbindeZuRegie, 3000);
